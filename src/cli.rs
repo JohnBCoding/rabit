@@ -33,6 +33,6 @@ pub enum Commands {
     /// Configure CLI Options
     Config {
         #[arg(short, long)]
-        text_width: usize,
+        text_width: Option<usize>,
     },
 }

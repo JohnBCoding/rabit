@@ -87,8 +87,10 @@ fn main() {
                 }
             }
             Some(Commands::Config { text_width }) => {
-                data.config.view_text_width = *text_width;
-                let _ = write_data(&data);
+                if let Some(text_width) = text_width {
+                    data.config.view_text_width = *text_width;
+                    let _ = write_data(&data);
+                }
             }
             None => {}
         }
