@@ -1,16 +1,38 @@
 use crate::prelude::*;
 
 #[derive(Parser)]
-#[command(version, about, long_about = None)]
+#[command(version, about="A simple habit CLI", long_about = None)]
 pub struct Cli {
-    #[arg(short, long, action = clap::ArgAction::Count)]
-    pub debug: u8,
-
     #[command(subcommand)]
     pub command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Track { name: String },
+    /// Track a Rabit
+    Track {
+        /// Name of Rabit to track
+        name: String,
+        /// Overwrite track for the current day
+        #[arg(short, long)]
+        backtrack: bool,
+    },
+    /// Cull A Rabit
+    Cull {
+        /// Name of Rabit to cull
+        name: Option<String>,
+        /// Cull entire Fluffle (reset data)
+        #[arg(short)]
+        full: bool,
+    },
+    /// View Rabit(s)
+    View {
+        /// Name of Rabit to view
+        name: Option<String>,
+    },
+    /// Configure CLI Options
+    Config {
+        #[arg(short, long)]
+        text_width: usize,
+    },
 }
