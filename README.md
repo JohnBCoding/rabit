@@ -2,6 +2,10 @@
 
 CLI tool for tracking your habits.
 
+## Features
+- Daily tracking of habits (🐇s?)
+- Everything stored in one JSON file.
+
 ## Usage
 
 ```

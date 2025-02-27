@@ -1,6 +1,14 @@
 [package]
 name = "rabit"
 version = "0.1.0"
+authors = ["John B. <johnbcoding@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "A CLI tool to track your habits."
+readme = "README.md"
+homepage = "https://github.com/JohnBCoding/rabit"
+repository = "https://github.com/JohnBCoding/rabit"
+keywords = ["cli", "habit", "habits"]
+categories = ["command-line-utilities"]
 edition = "2021"
 
 [dependencies]
