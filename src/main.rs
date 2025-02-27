@@ -64,10 +64,15 @@ fn main() {
 
     if let Ok(mut data) = get_data() {
         match &cli.command {
-            Some(Commands::Track { name, backtrack }) => {
-                let new_rabit = Rabit::new(&data.config, name);
-                data.track(new_rabit, *backtrack);
+            Some(Commands::Track {
+                name,
+                value,
+                backtrack,
+            }) => {
+                let new_rabit = Rabit::new(&data.config, name, value);
+                data.track(new_rabit, value, *backtrack);
                 let _ = write_data(&data);
+                data.print_fluffle();
             }
             Some(Commands::Cull { name, full }) => {
                 if *full {
@@ -79,14 +84,26 @@ fn main() {
                     }
                 }
             }
-            Some(Commands::View { name }) => {
+            Some(Commands::Observe {
+                name,
+                group,
+                duration,
+            }) => {
                 if let Some(name) = name {
                     data.print_rabit(name);
                 } else {
                     data.print_fluffle();
                 }
             }
-            Some(Commands::Config { text_width }) => {
+            Some(Commands::Config {
+                observe_after_track,
+                text_width,
+            }) => {
+                if let Some(observe_after_track) = observe_after_track {
+                    data.config.observe_after_track = *observe_after_track;
+                    let _ = write_data(&data);
+                }
+
                 if let Some(text_width) = text_width {
                     data.config.view_text_width = *text_width;
                     let _ = write_data(&data);

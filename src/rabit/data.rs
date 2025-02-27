@@ -14,7 +14,7 @@ impl Data {
         }
     }
 
-    pub fn track(&mut self, new_rabit: Rabit, overwrite_track: bool) {
+    pub fn track(&mut self, new_rabit: Rabit, value: &Option<String>, overwrite_track: bool) {
         let mut has_rabit = None;
         for rabit in &mut self.rabits {
             if rabit.name == new_rabit.name {
@@ -36,12 +36,12 @@ impl Data {
 
             if let Some(track_index) = track_index {
                 if overwrite_track {
-                    rabit.tracks[track_index] = Track::new(&self.config);
+                    rabit.tracks[track_index] = Track::new(&self.config, value);
                 } else {
                     eprintln!("There is already a track for today, use --backtrack to retrack.")
                 }
             } else {
-                rabit.tracks.push(Track::new(&self.config));
+                rabit.tracks.push(Track::new(&self.config, value));
             }
         } else {
             // !TODO prompt user if they want to create or not
@@ -86,13 +86,12 @@ impl Data {
                 for track in &rabit.tracks {
                     if track.date == *date_str {
                         found_track = true;
+                        track_line.push(track.value.as_str());
                         break;
                     }
                 }
 
-                if found_track {
-                    track_line.push("\u{1f5f9}");
-                } else {
+                if !found_track {
                     track_line.push("\u{2610}");
                 }
             }
@@ -156,13 +155,12 @@ impl Data {
                 for track in &rabit.tracks {
                     if track.date == *date_str {
                         found_track = true;
+                        track_line.push((date_str, track.value.as_str()));
                         break;
                     }
                 }
 
-                if found_track {
-                    track_line.push((date_str, "\u{1f5f9}"));
-                } else {
+                if !found_track {
                     track_line.push((date_str, "\u{2610}"));
                 }
             }

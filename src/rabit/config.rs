@@ -2,6 +2,7 @@ use crate::prelude::*;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
+    pub observe_after_track: bool,
     pub view_text_width: usize,
     pub date_format: String,
     date_small_format: String,
@@ -10,6 +11,7 @@ pub struct Config {
 impl Config {
     pub fn new() -> Self {
         Self {
+            observe_after_track: true,
             view_text_width: 12,
             date_format: "%m/%d/%Y".to_string(),
             date_small_format: "%m/%d".to_string(),

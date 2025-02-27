@@ -4,6 +4,7 @@ CLI tool for tracking your habits.
 
 ## Features
 - Daily tracking of habits (🐇s?)
+- Track via simple checkboxes or unique values for different types of habit tracking
 - Everything stored in one JSON file.
 
 ## Usage
@@ -34,7 +35,7 @@ If you currently have cargo installed you can simply run the following to instal
 
 ## Building
 
-rabit can be built with the rust toolchain
+🐇 can be built with the rust toolchain
 
 ```
 git clone https://github.com/JohnBCoding/rabit.git
