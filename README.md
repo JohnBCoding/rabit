@@ -31,3 +31,13 @@ Options:
 If you currently have cargo installed you can simply run the following to install:
 
 > run cargo install rabit
+
+## Building
+
+rabit can be built with the rust toolchain
+
+```
+git clone https://github.com/JohnBCoding/rabit.git
+cd rabit
+cargo build --release
+```
