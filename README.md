@@ -45,3 +45,10 @@ git clone https://github.com/JohnBCoding/rabit.git
 cd rabit
 cargo build --release
 ```
+## Requests/Issues
+
+Have an issue with 🐇? Want a feature added to the herd? please submit a new issue [here](https://github.com/JohnBCoding/rabit/issues/new)
+
+## License
+
+🐇 is distributed under the terms of the [MIT License](https://github.com/JohnBCoding/rabit/blob/main/LICENSE-MIT)
