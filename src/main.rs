@@ -4,9 +4,10 @@ mod rabit;
 mod prelude {
     pub use crate::cli::*;
     pub use crate::rabit::*;
-    pub use chrono::NaiveDate;
+    pub use chrono::{Datelike, Days, Local, NaiveDate};
     pub use clap::{Parser, Subcommand};
     pub use serde::{Deserialize, Serialize};
+    pub use std::cmp::max;
     pub use std::fs::OpenOptions;
     pub use std::io::Write;
 }
@@ -72,7 +73,7 @@ fn main() {
                 let new_rabit = Rabit::new(&data.config, name, value);
                 data.track(new_rabit, value, *backtrack);
                 let _ = write_data(&data);
-                data.print_fluffle();
+                data.print_fluffle(&None, &None);
             }
             Some(Commands::Cull { name, full }) => {
                 if *full {
@@ -90,9 +91,9 @@ fn main() {
                 duration,
             }) => {
                 if let Some(name) = name {
-                    data.print_rabit(name);
+                    data.print_rabit(name, group, duration);
                 } else {
-                    data.print_fluffle();
+                    data.print_fluffle(group, duration);
                 }
             }
             Some(Commands::Config {
@@ -112,6 +113,17 @@ fn main() {
             None => {}
         }
     } else {
-        eprintln!("Unable to get data file. Exiting..");
+        match &cli.command {
+            Some(Commands::Cull { name, full }) => {
+                if *full {
+                    let _ = reset_data();
+                }
+            }
+
+            _ => {
+                eprintln!("Unable to get data file.");
+                eprintln!("If issue persists, try `rabit cull -f` to reset your data file.");
+            }
+        }
     }
 }

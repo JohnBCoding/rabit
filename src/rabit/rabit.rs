@@ -10,7 +10,7 @@ pub struct Rabit {
 
 impl Rabit {
     pub fn new(config: &Config, name: &str, value: &Option<String>) -> Self {
-        let date_now = chrono::Local::now();
+        let date_now = Local::now();
         let init_date = format!("{}", date_now.format(config.get_date_format()));
         let date_time = date_now.time();
         let init_time = format!("{}", date_time.format("%H:%M:%S"));

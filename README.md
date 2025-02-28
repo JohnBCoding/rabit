@@ -16,11 +16,11 @@ A simple habit CLI
 Usage: rabit [COMMAND]
 
 Commands:
-  track   Track a Rabit
-  cull    Cull A Rabit
-  view    View Rabit(s)
-  config  Configure CLI Options
-  help    Print this message or the help of the given subcommand(s)
+  track    Track a Rabit
+  cull     Cull A Rabit
+  observe  View Rabit(s)
+  config   Configure CLI Options
+  help     Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help

@@ -24,7 +24,7 @@ impl Data {
         }
 
         if let Some(rabit) = has_rabit {
-            let date_now = chrono::Local::now();
+            let date_now = Local::now();
             let date_now_str = format!("{}", date_now.format(&self.config.date_format));
             let mut track_index = None;
             for (index, track) in rabit.tracks.iter().enumerate() {
@@ -61,84 +61,161 @@ impl Data {
         self.rabits.remove(cull_index);
     }
 
-    pub fn print_fluffle(&self) {
+    fn print_fluffle_by_day(&self, rabit: &Rabit, set_duration: &Option<i32>) {
+        let duration = if let Some(duration) = set_duration {
+            duration
+        } else {
+            &7
+        };
+
         let text_width = self.config.view_text_width;
+        let header_width = text_width * 2;
         let date_format = self.config.get_date_format();
 
+        println!("\n{:^header_width$}", rabit.name);
+        println!("{:-<header_width$}", "");
         let mut date_strs = vec![];
-        let mut date_cmp_strs = vec![];
-        let mut rabit_line_str = "".to_string();
+        let mut date_strs_cmp = vec![];
+        let date_now = Local::now();
+        for i in (0..*duration).rev() {
+            let day = max(0, (date_now.day() as i32) - i);
 
-        let date_now = chrono::Local::now();
-        let mut start_date = date_now.date_naive() - chrono::Days::new(6);
-        while start_date <= date_now.date_naive() {
-            let date_str = format!("{:^text_width$}", start_date.format(&date_format));
-            date_strs.push(date_str);
-            let date_cmp_str = format!("{}", start_date.format(&self.config.date_format));
-            date_cmp_strs.push(date_cmp_str);
-            start_date = start_date + chrono::Days::new(1);
+            if let Some(start_date) =
+                NaiveDate::from_ymd_opt(date_now.year(), date_now.month(), day as u32)
+            {
+                date_strs.push(format!("{:^text_width$}", start_date.format(&date_format)));
+                date_strs_cmp.push(format!("{}", start_date.format(&self.config.date_format)));
+
+                if date_strs.len() == 7 || i == 0 {
+                    let date_str = date_strs.iter().map(|str| str.clone()).collect::<String>();
+                    println!("{}", date_str);
+                    let mut track_line_str = "".to_string();
+                    for date_str in &date_strs_cmp {
+                        let mut found_track = false;
+                        for track in &rabit.tracks {
+                            if track.date == *date_str {
+                                found_track = true;
+                                track_line_str = format!(
+                                    "{}{:^text_width$}",
+                                    track_line_str,
+                                    track.value.as_str()
+                                );
+                                break;
+                            }
+                        }
+
+                        if !found_track {
+                            track_line_str =
+                                format!("{}{:^text_width$}", track_line_str, "\u{2610}");
+                        }
+                    }
+                    println!("{}\n", track_line_str);
+
+                    date_strs = vec![];
+                    date_strs_cmp = vec![];
+                }
+            }
         }
+    }
 
-        self.rabits.iter().for_each(|rabit| {
-            let mut track_line = vec![];
-            for date_str in &date_cmp_strs {
-                let mut found_track = false;
-                for track in &rabit.tracks {
-                    if track.date == *date_str {
-                        found_track = true;
-                        track_line.push(track.value.as_str());
+    fn print_fluffle_by_month(&self, rabit: &Rabit, set_duration: &Option<i32>) {
+        let duration = if let Some(duration) = set_duration {
+            duration
+        } else {
+            &1
+        };
+
+        let text_width = self.config.view_text_width;
+        let header_width = text_width * 2;
+        let date_format = self.config.get_date_format();
+
+        println!("\n{:^header_width$}", rabit.name);
+        println!("{:-<header_width$}", "");
+        let date_now = Local::now();
+        for i in (0..*duration).rev() {
+            let mut year = date_now.year();
+            let mut month = (date_now.month() as i32) - i;
+
+            if month < 0 {
+                year -= 1;
+                month = 12 + month;
+            }
+
+            if let Some(mut start_date) = NaiveDate::from_ymd_opt(year, month as u32, 1) {
+                println!("{:^header_width$}", start_date.format("%B"));
+                println!("{:-<header_width$}", "");
+                let mut date_strs = vec![];
+                let mut date_strs_cmp = vec![];
+                loop {
+                    let current_month = start_date.month0();
+                    date_strs.push(format!("{:^text_width$}", start_date.format(&date_format)));
+                    date_strs_cmp.push(format!("{}", start_date.format(&self.config.date_format)));
+                    start_date = start_date + Days::new(1);
+
+                    if date_strs.len() == 7 || start_date.month0() != current_month {
+                        let date_str = date_strs.iter().map(|str| str.clone()).collect::<String>();
+                        println!("{}", date_str);
+                        let mut track_line_str = "".to_string();
+                        for date_str in &date_strs_cmp {
+                            let mut found_track = false;
+                            for track in &rabit.tracks {
+                                if track.date == *date_str {
+                                    found_track = true;
+                                    track_line_str = format!(
+                                        "{}{:^text_width$}",
+                                        track_line_str,
+                                        track.value.as_str()
+                                    );
+                                    break;
+                                }
+                            }
+
+                            if !found_track {
+                                track_line_str =
+                                    format!("{}{:^text_width$}", track_line_str, "\u{2610}");
+                            }
+                        }
+                        println!("{}\n", track_line_str);
+
+                        date_strs = vec![];
+                        date_strs_cmp = vec![];
+                    }
+
+                    if start_date.month0() != current_month {
                         break;
                     }
                 }
-
-                if !found_track {
-                    track_line.push("\u{2610}");
-                }
             }
-
-            let track_str = track_line
-                .iter()
-                .map(|line| format!("{:^text_width$}", line))
-                .collect::<String>();
-
-            rabit_line_str = format!(
-                "{}{:<text_width$}|{:^text_width$}\n",
-                rabit_line_str,
-                format!("{:.text_width$}", &rabit.name),
-                track_str
-            );
-        });
-
-        println!("");
-        println!(
-            "{:<text_width$}{:<text_width$}",
-            "",
-            date_strs
-                .iter()
-                .map(|str| { format!("{:<text_width$}", str) })
-                .collect::<String>()
-        );
-        println!("{:-<text_width$}", "");
-        println!("{}{:-<text_width$}", rabit_line_str, "");
-        println!("");
+        }
     }
 
-    pub fn print_rabit(&self, name: &String) {
-        let text_width = self.config.view_text_width;
-        let date_format = self.config.get_date_format();
+    pub fn print_fluffle(&self, set_group: &Option<String>, duration: &Option<i32>) {
+        let group = if let Some(group) = set_group {
+            group
+        } else {
+            "day"
+        };
 
-        let mut date_strs = vec![];
-        let mut date_cmp_strs = vec![];
+        self.rabits.iter().for_each(|rabit| match group {
+            "day" => {
+                self.print_fluffle_by_day(&rabit, duration);
+            }
+            "week" => {
+                self.print_fluffle_by_day(&rabit, duration);
+            }
+            "month" => {
+                self.print_fluffle_by_month(&rabit, duration);
+            }
+            _ => {}
+        });
+    }
 
-        let date_now = chrono::Local::now();
-        let mut start_date = date_now.date_naive() - chrono::Days::new(29);
-        while start_date <= date_now.date_naive() {
-            let date_str = format!("{:^text_width$}", start_date.format(&date_format));
-            date_strs.push(date_str);
-            let date_cmp_str = format!("{}", start_date.format(&self.config.date_format));
-            date_cmp_strs.push(date_cmp_str);
-            start_date = start_date + chrono::Days::new(1);
-        }
+    pub fn print_rabit(&self, name: &String, set_group: &Option<String>, duration: &Option<i32>) {
+        let group = if let Some(group) = set_group {
+            group
+        } else {
+            "day"
+        };
 
         let mut rabit = None;
         for drabit in &self.rabits {
@@ -149,42 +226,18 @@ impl Data {
         }
 
         if let Some(rabit) = rabit {
-            let mut track_line = vec![];
-            for date_str in &date_cmp_strs {
-                let mut found_track = false;
-                for track in &rabit.tracks {
-                    if track.date == *date_str {
-                        found_track = true;
-                        track_line.push((date_str, track.value.as_str()));
-                        break;
-                    }
+            match group {
+                "day" => {
+                    self.print_fluffle_by_day(&rabit, duration);
                 }
-
-                if !found_track {
-                    track_line.push((date_str, "\u{2610}"));
+                "week" => {
+                    self.print_fluffle_by_day(&rabit, duration);
                 }
+                "month" => {
+                    self.print_fluffle_by_month(&rabit, duration);
+                }
+                _ => {}
             }
-
-            println!("");
-            println!("{:^text_width$}", rabit.name);
-            println!("{:-<text_width$}", "");
-            let mut line_str = String::default();
-            let mut line_2_str = String::default();
-            for (index, (date_str, result)) in track_line.iter().enumerate() {
-                if index % 5 == 0 && index != 0 {
-                    println!("{}", line_str);
-                    println!("{}", line_2_str);
-                    line_str = String::default();
-                    line_2_str = String::default();
-                }
-
-                line_str = format!("{} {:^text_width$} ", line_str, date_str);
-                line_2_str = format!("{} {:^text_width$} ", line_2_str, result);
-            }
-            println!("{}", line_str);
-            println!("{}", line_2_str);
-            println!("{:-<text_width$}", "");
-            println!("");
         }
     }
 }

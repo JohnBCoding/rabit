@@ -36,14 +36,16 @@ pub enum Commands {
         /// Name of Rabit to view
         name: Option<String>,
 
-        /// Sets duration of observation
-        #[arg(short, long)]
-        duration: Option<i32>,
-
-        /// Sets how observation is grouped, options are week, month, year
+        /// Sets how observation is grouped, options are 'day' or 'month'
         #[arg(short, long)]
         group: Option<String>,
+
+        /// Sets duration of observation, note that the scale of this is determined by the group type set.
+        /// Defaults to 7(duration) days(group) for full rabit observation or 1(duration) month(group) for specific rabit observation
+        #[arg(short, long)]
+        duration: Option<i32>,
     },
+
     /// Configure CLI Options
     Config {
         /// Toggles print out of rabits after tracking a new rabit
