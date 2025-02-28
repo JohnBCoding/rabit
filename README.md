@@ -4,7 +4,8 @@ CLI tool for tracking your habits.
 
 ## Features
 - Daily tracking of habits (🐇s?)
-- Track via simple checkboxes or unique values for different types of habit tracking
+- Easily `Track` with checkboxes or unique values for different types of 🐇 tracking!
+- `Observe` your 🐇s in the terminal to see where you bounced!
 - Everything stored in one JSON file.
 
 ## Usage
