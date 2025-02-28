@@ -10,7 +10,7 @@ CLI tool for tracking your habits.
 ## Usage
 
 ```
-rabit 0.1.0
+rabit 0.2.0
 A simple habit CLI
 
 Usage: rabit [COMMAND]
