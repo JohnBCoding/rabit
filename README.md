@@ -2,6 +2,7 @@
 
 CLI tool for tracking your habits.
 
+![](https://img.shields.io/crates/d/rabit)
 ## Features
 - Daily tracking of habits (🐇s?)
 - Easily `Track` with checkboxes or unique values for different types of 🐇 tracking!
