@@ -6,6 +6,8 @@ CLI tool for tracking your habits.
 - Daily tracking of habits (🐇s?)
 - Easily `Track` with checkboxes or unique values for different types of 🐇 tracking!
 - `Observe` your 🐇s in the terminal to see where you bounced!
+- `Cull` your 🐇s to make some room in the herd.
+- `Config` your 🐇 to your needs!
 - Everything stored in one JSON file.
 
 ## Usage
