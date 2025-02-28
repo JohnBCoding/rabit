@@ -240,4 +240,47 @@ impl Data {
             }
         }
     }
+
+    pub fn to_csv(&self, filename: &str, duration: &Option<u64>) {
+        let mut csv_string = "".to_string();
+
+        let duration = if let Some(duration) = duration {
+            *duration
+        } else {
+            30
+        };
+        let mut start_date = Local::now() - Days::new(duration);
+        let mut date_strs = vec![];
+        for _ in 1..=duration + 1 {
+            date_strs.push(format!("{}", start_date.format(&self.config.date_format)));
+            start_date = start_date + Days::new(1);
+        }
+
+        date_strs.iter().for_each(|date_str| {
+            let mut added_track_for_date = false;
+            self.rabits.iter().for_each(|rabit| {
+                rabit.tracks.iter().for_each(|track| {
+                    if track.date == *date_str {
+                        csv_string = format!(
+                            "{}\n{},{},{},",
+                            csv_string, date_str, rabit.name, track.value
+                        );
+                        added_track_for_date = true;
+                    }
+                });
+            });
+
+            if !added_track_for_date {
+                csv_string = format!("{}\n{},{},{},", csv_string, date_str, "", "",);
+            }
+        });
+
+        csv_string = format!("{}{}", "Date,Rabit,Value,", csv_string);
+
+        if let Ok(_) = export_data_to_file(filename, csv_string.as_bytes()) {
+            println!("Successfully exported rabit data to rabit_export.csv");
+        } else {
+            eprintln!("Error exporting rabit data, please try again.");
+        }
+    }
 }

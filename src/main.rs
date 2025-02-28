@@ -1,9 +1,11 @@
 mod cli;
 mod rabit;
+mod utils;
 
 mod prelude {
     pub use crate::cli::*;
     pub use crate::rabit::*;
+    pub use crate::utils::*;
     pub use chrono::{Datelike, Days, Local, NaiveDate};
     pub use clap::{Parser, Subcommand};
     pub use serde::{Deserialize, Serialize};
@@ -96,6 +98,9 @@ fn main() {
                     data.print_fluffle(group, duration);
                 }
             }
+            Some(Commands::Migrate { name, duration }) => {
+                data.to_csv(&name, duration);
+            }
             Some(Commands::Config {
                 observe_after_track,
                 text_width,
@@ -114,7 +119,7 @@ fn main() {
         }
     } else {
         match &cli.command {
-            Some(Commands::Cull { name, full }) => {
+            Some(Commands::Cull { full, .. }) => {
                 if *full {
                     let _ = reset_data();
                 }

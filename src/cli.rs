@@ -46,6 +46,16 @@ pub enum Commands {
         duration: Option<i32>,
     },
 
+    /// Export your data to csv
+    Migrate {
+        /// Name of exported file
+        name: String,
+
+        ///  Number of days to export, default is 30
+        #[arg(short, long)]
+        duration: Option<u64>,
+    },
+
     /// Configure CLI Options
     Config {
         /// Toggles print out of rabits after tracking a new rabit
