@@ -26,6 +26,8 @@ fn write_data(data: &Data) -> std::io::Result<()> {
     let data_str = serde_json::to_string(data)?;
     data_file.write_all(data_str.as_bytes())?;
     data_file.flush()?;
+
+    println!("Rabit config successfully updated.");
     Ok(())
 }
 
@@ -104,16 +106,36 @@ fn main() {
             Some(Commands::Config {
                 observe_after_track,
                 text_width,
+                group,
+                day_duration,
+                month_duration,
+                migrate_duration,
             }) => {
                 if let Some(observe_after_track) = observe_after_track {
                     data.config.observe_after_track = *observe_after_track;
-                    let _ = write_data(&data);
                 }
 
                 if let Some(text_width) = text_width {
                     data.config.view_text_width = *text_width;
-                    let _ = write_data(&data);
                 }
+
+                if let Some(group) = group {
+                    data.config.default_observe_group = group.to_string();
+                }
+
+                if let Some(day_duration) = day_duration {
+                    data.config.default_day_duration = *day_duration;
+                }
+
+                if let Some(month_duration) = month_duration {
+                    data.config.default_month_duration = *month_duration;
+                }
+
+                if let Some(migrate_duration) = migrate_duration {
+                    data.config.default_migrate_duration = *migrate_duration;
+                }
+
+                let _ = write_data(&data);
             }
             None => {}
         }

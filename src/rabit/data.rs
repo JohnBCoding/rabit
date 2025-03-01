@@ -132,7 +132,7 @@ impl Data {
         println!("\n{:^header_width$}", rabit.name);
         println!("{:-<header_width$}", "");
         let date_now = Local::now();
-        for i in (0..duration).rev() {
+        for i in (0..=duration).rev() {
             let mut year = date_now.year();
             let mut month = (date_now.month() as i32) - i;
 

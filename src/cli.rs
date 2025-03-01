@@ -65,5 +65,20 @@ pub enum Commands {
         /// Sets text width
         #[arg(short, long)]
         text_width: Option<usize>,
+
+        /// Sets default group type
+        group: Option<String>,
+
+        /// Sets default day duration
+        #[arg(long)]
+        day_duration: Option<i32>,
+
+        /// Sets default month duration
+        #[arg(long)]
+        month_duration: Option<i32>,
+
+        /// Sets default migrate duration
+        #[arg(long)]
+        migrate_duration: Option<i32>,
     },
 }
