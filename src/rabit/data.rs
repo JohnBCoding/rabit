@@ -63,9 +63,9 @@ impl Data {
 
     fn print_fluffle_by_day(&self, rabit: &Rabit, set_duration: &Option<i32>) {
         let duration = if let Some(duration) = set_duration {
-            duration
+            *duration
         } else {
-            &7
+            self.config.default_day_duration
         };
 
         let text_width = self.config.view_text_width;
@@ -77,7 +77,7 @@ impl Data {
         let mut date_strs = vec![];
         let mut date_strs_cmp = vec![];
         let date_now = Local::now();
-        for i in (0..*duration).rev() {
+        for i in (0..duration).rev() {
             let day = max(0, (date_now.day() as i32) - i);
 
             if let Some(start_date) =
@@ -120,9 +120,9 @@ impl Data {
 
     fn print_fluffle_by_month(&self, rabit: &Rabit, set_duration: &Option<i32>) {
         let duration = if let Some(duration) = set_duration {
-            duration
+            *duration
         } else {
-            &1
+            self.config.default_month_duration
         };
 
         let text_width = self.config.view_text_width;
@@ -132,7 +132,7 @@ impl Data {
         println!("\n{:^header_width$}", rabit.name);
         println!("{:-<header_width$}", "");
         let date_now = Local::now();
-        for i in (0..*duration).rev() {
+        for i in (0..duration).rev() {
             let mut year = date_now.year();
             let mut month = (date_now.month() as i32) - i;
 
@@ -193,14 +193,11 @@ impl Data {
         let group = if let Some(group) = set_group {
             group
         } else {
-            "day"
+            self.config.default_observe_group.as_str()
         };
 
         self.rabits.iter().for_each(|rabit| match group {
             "day" => {
-                self.print_fluffle_by_day(&rabit, duration);
-            }
-            "week" => {
                 self.print_fluffle_by_day(&rabit, duration);
             }
             "month" => {
@@ -214,7 +211,7 @@ impl Data {
         let group = if let Some(group) = set_group {
             group
         } else {
-            "day"
+            self.config.default_observe_group.as_str()
         };
 
         let mut rabit = None;
@@ -230,9 +227,6 @@ impl Data {
                 "day" => {
                     self.print_fluffle_by_day(&rabit, duration);
                 }
-                "week" => {
-                    self.print_fluffle_by_day(&rabit, duration);
-                }
                 "month" => {
                     self.print_fluffle_by_month(&rabit, duration);
                 }
@@ -241,15 +235,15 @@ impl Data {
         }
     }
 
-    pub fn to_csv(&self, filename: &str, duration: &Option<u64>) {
+    pub fn to_csv(&self, filename: &str, duration: &Option<i32>) {
         let mut csv_string = "".to_string();
-
         let duration = if let Some(duration) = duration {
             *duration
         } else {
-            30
+            self.config.default_migrate_duration
         };
-        let mut start_date = Local::now() - Days::new(duration);
+
+        let mut start_date = Local::now() - Days::new(duration as u64);
         let mut date_strs = vec![];
         for _ in 1..=duration + 1 {
             date_strs.push(format!("{}", start_date.format(&self.config.date_format)));

@@ -53,7 +53,7 @@ pub enum Commands {
 
         ///  Number of days to export, default is 30
         #[arg(short, long)]
-        duration: Option<u64>,
+        duration: Option<i32>,
     },
 
     /// Configure CLI Options
