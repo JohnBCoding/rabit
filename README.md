@@ -14,7 +14,7 @@ CLI tool for tracking your habits.
 ## Usage
 
 ```
-rabit 0.2.0
+rabit 0.2.2
 A simple habit CLI
 
 Usage: rabit [COMMAND]
@@ -23,6 +23,7 @@ Commands:
   track    Track a Rabit
   cull     Cull A Rabit
   observe  View Rabit(s)
+  migrate  Export your data to csv
   config   Configure CLI Options
   help     Print this message or the help of the given subcommand(s)
 
