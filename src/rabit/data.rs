@@ -63,9 +63,9 @@ impl Data {
 
     fn print_fluffle_by_day(&self, rabit: &Rabit, set_duration: &Option<i32>) {
         let duration = if let Some(duration) = set_duration {
-            *duration
+            *duration - 1
         } else {
-            self.config.default_day_duration
+            self.config.default_day_duration - 1
         };
 
         let text_width = self.config.view_text_width;
@@ -74,48 +74,45 @@ impl Data {
 
         println!("\n{:^header_width$}", rabit.name);
         println!("{:-<header_width$}", "");
+        let mut start_date = Local::now() - Days::new(duration as u64);
         let mut date_strs = vec![];
         let mut date_strs_cmp = vec![];
-        let date_now = Local::now();
-        for i in (0..duration).rev() {
-            let day = max(0, (date_now.day() as i32) - i);
+        for _ in 1..=duration + 1 {
+            date_strs.push(format!("{}", start_date.format(date_format)));
+            date_strs_cmp.push(format!("{}", start_date.format(&self.config.date_format)));
+            start_date = start_date + Days::new(1);
+        }
 
-            if let Some(start_date) =
-                NaiveDate::from_ymd_opt(date_now.year(), date_now.month(), day as u32)
-            {
-                date_strs.push(format!("{:^text_width$}", start_date.format(&date_format)));
-                date_strs_cmp.push(format!("{}", start_date.format(&self.config.date_format)));
+        let mut date_line_str = "".to_string();
+        let mut track_line_str = "".to_string();
+        for (index, date_str) in date_strs.iter().enumerate() {
+            if index % 7 == 0 && index != 0 {
+                println!("{}", date_line_str);
+                println!("{}\n", track_line_str);
+                date_line_str = "".to_string();
+                track_line_str = "".to_string();
+            }
 
-                if date_strs.len() == 7 || i == 0 {
-                    let date_str = date_strs.iter().map(|str| str.clone()).collect::<String>();
-                    println!("{}", date_str);
-                    let mut track_line_str = "".to_string();
-                    for date_str in &date_strs_cmp {
-                        let mut found_track = false;
-                        for track in &rabit.tracks {
-                            if track.date == *date_str {
-                                found_track = true;
-                                track_line_str = format!(
-                                    "{}{:^text_width$}",
-                                    track_line_str,
-                                    track.value.as_str()
-                                );
-                                break;
-                            }
-                        }
+            date_line_str = format!("{}{:^text_width$}", date_line_str, date_str);
 
-                        if !found_track {
-                            track_line_str =
-                                format!("{}{:^text_width$}", track_line_str, "\u{2610}");
-                        }
-                    }
-                    println!("{}\n", track_line_str);
-
-                    date_strs = vec![];
-                    date_strs_cmp = vec![];
+            let date_str_cmp = &date_strs_cmp[index];
+            let mut found_track = false;
+            for track in &rabit.tracks {
+                if track.date == *date_str_cmp {
+                    found_track = true;
+                    track_line_str =
+                        format!("{}{:^text_width$}", track_line_str, track.value.as_str());
+                    break;
                 }
             }
+
+            if !found_track {
+                track_line_str = format!("{}{:^text_width$}", track_line_str, "\u{2610}");
+            }
         }
+
+        println!("{}", date_line_str);
+        println!("{}\n", track_line_str);
     }
 
     fn print_fluffle_by_month(&self, rabit: &Rabit, set_duration: &Option<i32>) {

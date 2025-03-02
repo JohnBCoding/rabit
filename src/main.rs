@@ -31,7 +31,7 @@ fn write_data(data: &Data) -> std::io::Result<()> {
     Ok(())
 }
 
-fn get_data() -> Result<Data, Box<dyn std::error::Error>> {
+fn get_data() -> std::io::Result<Data> {
     let data_file = OpenOptions::new()
         .create(true)
         .read(true)
@@ -47,7 +47,7 @@ fn get_data() -> Result<Data, Box<dyn std::error::Error>> {
     }
 }
 
-fn reset_data() -> Result<(), Box<dyn std::error::Error>> {
+fn reset_data() -> std::io::Result<()> {
     let mut data_file = OpenOptions::new()
         .create(true)
         .truncate(true)
