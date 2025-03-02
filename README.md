@@ -14,7 +14,7 @@ CLI tool for tracking your habits.
 ## Usage
 
 ```
-rabit 0.2.2
+rabit 0.2.3
 A simple habit CLI
 
 Usage: rabit [COMMAND]
